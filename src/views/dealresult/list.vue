@@ -1,14 +1,10 @@
 <template>
   <el-row class="bookfilelist">
     <div>
-      <el-button @click="collect"
-                 icon="el-icon-sell"
-                 plain
-                 type="info">采集</el-button>
       <el-button @click="show"
                  icon="el-icon-search"
                  plain
-                 type="info">查看采集日志</el-button>
+                 type="info">查看执行进度明细</el-button>
     </div>
     <div style="margin-top: 20px;">
       <el-table :data="page.records"
@@ -29,56 +25,18 @@
                          label="序号"
                          show-overflow-tooltip
                          type="index"></el-table-column>
-        <el-table-column label="账套所属单位名称"
-                         prop="entityName"
-                         show-overflow-tooltip>
-        </el-table-column>
-        <el-table-column align="center"
-                         label="采集数据类型"
-                         prop="dataType"
-                         show-overflow-tooltip
-                         width="120"></el-table-column>
-        <el-table-column label="账套年度"
-                         prop="dataYear"
-                         align="center"
-                         show-overflow-tooltip
-                         width="120"></el-table-column>
+
         <el-table-column label="数据文件名"
                          prop="fileName"
                          show-overflow-tooltip>
         </el-table-column>
-
-        <el-table-column label="财务数据库类型"
-                         prop="databaseType"
-                         show-overflow-tooltip
-                         width="130"></el-table-column>
-        <el-table-column label="财务数据库版本"
-                         prop="databaseVersion"
-                         show-overflow-tooltip
-                         width="130"></el-table-column>
-
-        <el-table-column label="财务软件类型"
-                         prop="softType"
-                         show-overflow-tooltip
-                         width="130">
-        </el-table-column>
-        <el-table-column label="财务软件版本"
-                         prop="softVersion"
-                         show-overflow-tooltip
-                         width="130">
-        </el-table-column>
-        <el-table-column label="上传时间"
-                         prop="uploadTime"
+        <el-table-column label="执行完成率"
+                         prop="rate"
                          align="center"
-                         show-overflow-tooltip
-                         width="130">
-          <template slot-scope="scope">{{scope.row.uploadTime}}</template>
-        </el-table-column>
-        <el-table-column label="采集结果"
-                         prop="dealResult"
-                         align="center"
-                         show-overflow-tooltip
-                         width="130">
+                         show-overflow-tooltip>
+          <template slot-scope="scope">
+            <el-progress :percentage="scope.row.rate?scope.row.rate*100:0"></el-progress>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination :current-page="page.current"
@@ -100,55 +58,41 @@ export default {
     return {
       page: { current: 1, size: 10, total: 0, records: [] },
       searchParam: { current: 1, size: 10 },
-      multipleSelection: []
+      multipleSelection: [],
+      timeNum: ''
     }
   },
   created () {
     this.getdealresultList()
+    this.timeNum = setInterval(this.getdealresultList, 1000)
   },
   methods: {
     // 加载列表
     getdealresultList () {
       this.$http.post('/api/dealResult/list', this.searchParam).then(res => {
         this.page = res.data.data
+        clearInterval(this.timeNum)
       })
     },
-    // 采集
-    collect () {
-      if (this.multipleSelection.length < 1) {
-        this.$message.info('请至少选择一条记录进行采集！')
-        return false
-      }
-      let uuidsArr = this.multipleSelection.map(item => item.uuid)
-      let uuidsStr = uuidsArr.join()
-      this.$http
-        .post('/api/dealResult/activate', { uuid: uuidsStr })
-        .then(res => {
-          if (res.data.code === 0) {
-            this.getdealresultList()
-            this.$message({
-              message: '采集成功',
-              type: 'success'
-            })
-          }
-        })
-    },
-    // 查看采集日志
+    // 查看进度明细
     show () {
       if (this.multipleSelection.length !== 1) {
         this.$message.info('请选择一条记录进行查看操作！')
         return false
       }
-      this.$http
-        .post('/api/dealResult/detail/baseInfo', { uuid: this.multipleSelection[0].uuid })
-        .then(res => {
-          if (res.data.code === 0) {
-            this.$message({
-              message: '查看成功',
-              type: 'success'
-            })
-          }
+      if (this.multipleSelection[0].explain) {
+        let explain = this.multipleSelection[0].explain.split('\n')
+        let explainArr = explain.map(item => '<p>' + item + '</p>')
+        let explainStr = explainArr.join('')
+        this.$alert(explainStr, '进度明细', {
+          dangerouslyUseHTMLString: true
         })
+      } else {
+        this.$message({
+          message: '没有采集日志',
+          type: 'warning'
+        })
+      }
     },
     // 分页处理函数
     handleSizeChange (val) {

@@ -9,14 +9,14 @@
                  icon="el-icon-edit"
                  plain
                  type="info">编辑</el-button>
-      <el-button @click="del"
-                 icon="el-icon-delete"
-                 plain
-                 type="info">删除</el-button>
       <el-button @click="show"
                  icon="el-icon-search"
                  plain
                  type="info">查看</el-button>
+      <el-button @click="del"
+                 icon="el-icon-delete"
+                 plain
+                 type="info">删除</el-button>
     </div>
     <div style="margin-top: 20px;">
       <el-table :data="page.records"
@@ -37,33 +37,56 @@
                          label="序号"
                          show-overflow-tooltip
                          type="index"></el-table-column>
-        <el-table-column :width="100"
-                         align="center"
-                         label="单位编码"
-                         prop="orgcode"
-                         show-overflow-tooltip></el-table-column>
-        <el-table-column :width="120"
-                         label="单位简称"
-                         prop="shortname"
-                         show-overflow-tooltip></el-table-column>
-        <el-table-column :min-width="120"
-                         label="单位名称"
-                         prop="orgname"
-                         show-overflow-tooltip></el-table-column>
-        <el-table-column :min-width="100"
-                         label="所属单位"
-                         prop="porgname"
-                         show-overflow-tooltip></el-table-column>
-        <el-table-column filter-placement="bottom-end"
-                         label="操作"
-                         prop="isused"
+        <el-table-column label="账套所属单位名称"
+                         prop="entityname"
+                         show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column align="center"
+                         label="采集数据类型"
+                         prop="dataType"
                          show-overflow-tooltip
-                         width="80">
-          <template slot-scope="scope">
-            <el-button :type="scope.row.isused === '0' ? 'primary' : 'success'"
-                       @click.stop="handleOpenOrClosed(scope.$index, scope.row)"
-                       size="mini">{{scope.row.isused === "0" ?'启用':'禁用'}}</el-button>
-          </template>
+                         width="120"></el-table-column>
+        <el-table-column label="账套年度"
+                         prop="datayear"
+                         align="center"
+                         show-overflow-tooltip
+                         width="120"></el-table-column>
+        <el-table-column label="数据文件名"
+                         prop="fileName"
+                         show-overflow-tooltip>
+        </el-table-column>
+
+        <el-table-column label="财务数据库类型"
+                         prop="databaseType"
+                         show-overflow-tooltip
+                         width="130"></el-table-column>
+        <el-table-column label="财务数据库版本"
+                         prop="databaseVersion"
+                         show-overflow-tooltip
+                         width="130"></el-table-column>
+
+        <el-table-column label="财务软件类型"
+                         prop="softType"
+                         show-overflow-tooltip
+                         width="130">
+        </el-table-column>
+        <el-table-column label="财务软件版本"
+                         prop="softVersion"
+                         show-overflow-tooltip
+                         width="130">
+        </el-table-column>
+        <el-table-column label="上传时间"
+                         prop="uploadTime"
+                         align="center"
+                         show-overflow-tooltip
+                         width="130">
+          <template slot-scope="scope">{{scope.row.uploadTime}}</template>
+        </el-table-column>
+        <el-table-column label="采集结果"
+                         prop="dealResult"
+                         align="center"
+                         show-overflow-tooltip
+                         width="130">
         </el-table-column>
       </el-table>
       <el-pagination :current-page="page.current"

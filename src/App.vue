@@ -8,11 +8,11 @@
           <router-link to="/bookfile">采集文件管理</router-link>
         </el-menu-item>
         <el-menu-item index="2">
-          <router-link to="/dealresult">采集处理管理</router-link>
+          <router-link to="/dealresult">采集队列管理</router-link>
         </el-menu-item>
-        <el-menu-item index="3">
+        <!-- <el-menu-item index="3">
           <router-link to="/entitybook">账套对应关系查看</router-link>
-        </el-menu-item>
+        </el-menu-item> -->
       </el-menu>
     </div>
     <router-view />
@@ -32,7 +32,7 @@ export default {
     }
   },
   created () {
-    sessionStorage.setItem('a', this.loginAuthorization)
+    // sessionStorage.setItem('a', this.loginAuthorization)
     // this.login()
   },
   methods: {
@@ -97,5 +97,10 @@ export default {
 
 .el-menu--horizontal .el-menu-item:not(.is-disabled):hover i {
   color: #66b1ff;
+}
+.el-message-box__header {
+  background: #3a8ee6;
+  border-color: #3a8ee6;
+  color: #fff;
 }
 </style>

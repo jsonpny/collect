@@ -17,6 +17,14 @@
                  icon="el-icon-delete"
                  plain
                  type="info">删除</el-button>
+      <el-button @click="collect"
+                 icon="el-icon-sell"
+                 plain
+                 type="info">采集</el-button>
+      <el-button @click="showCollect"
+                 icon="el-icon-search"
+                 plain
+                 type="info">查看采集日志</el-button>
     </div>
     <div class="list-cont">
       <el-table :data="page.records"
@@ -92,6 +100,7 @@
                      layout="total, sizes, prev, pager, next, jumper"
                      style="margin-top: 5px;"></el-pagination>
     </div>
+
   </el-row>
 </template>
 
@@ -183,6 +192,46 @@ export default {
         path: '/bookfile/detail',
         query: { p: this.$utils.encrypt(JSON.stringify(p)) }
       })
+    },
+    // 采集
+    collect () {
+      if (this.multipleSelection.length < 1) {
+        this.$message.info('请至少选择一条记录进行采集！')
+        return false
+      }
+      let uuidsArr = this.multipleSelection.map(item => item.uuid)
+      let uuidsStr = uuidsArr.join()
+      this.$http
+        .post('/api/dealResult/activate', { uuid: uuidsStr })
+        .then(res => {
+          if (res.data.code === 0) {
+            this.getBookFileList()
+            this.$message({
+              message: '采集成功',
+              type: 'success'
+            })
+          }
+        })
+    },
+    // 查看采集结果
+    showCollect () {
+      if (this.multipleSelection.length !== 1) {
+        this.$message.info('请选择一条记录进行查看操作！')
+        return false
+      }
+      if (this.multipleSelection[0].dealResult) {
+        let dealResult = this.multipleSelection[0].dealResult.split('\n')
+        let dealResultArr = dealResult.map(item => '<p>' + item + '</p>')
+        let dealResultStr = dealResultArr.join('')
+        this.$alert(dealResultStr, '采集结果', {
+          dangerouslyUseHTMLString: true
+        })
+      } else {
+        this.$message({
+          message: '没有采集日志',
+          type: 'warning'
+        })
+      }
     },
     // 分页处理函数
     handleSizeChange (val) {

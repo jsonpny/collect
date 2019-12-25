@@ -78,7 +78,8 @@
               <el-form-item align="center">
                 <el-button @click="formOnSubmit"
                            type="primary">保存</el-button>
-                <el-button @click="formOnCancle">取消</el-button>
+                <el-button @click="formOnCancle"
+                           v-if="!!instid">取消</el-button>
               </el-form-item>
             </el-col>
           </el-row>
