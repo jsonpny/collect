@@ -57,7 +57,6 @@ export default {
           ]
         })
         .then(res => {
-          console.log(res.data)
           if (res.data.code === 0 || res.data.code === 2) {
             // 登录成功跳转
             this.$router.push('/bookfile')
