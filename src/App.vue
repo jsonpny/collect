@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <!-- <div id="nav">
       <el-menu :default-active="activeIndex"
                class="el-menu-demo"
                mode="horizontal">
@@ -10,60 +10,52 @@
         <el-menu-item index="2">
           <router-link to="/dealresult">采集队列管理</router-link>
         </el-menu-item>
-        <!-- <el-menu-item index="3">
+        <el-menu-item index="3">
           <router-link to="/entitybook">账套对应关系查看</router-link>
-        </el-menu-item> -->
+        </el-menu-item>
       </el-menu>
-    </div>
+    </div> -->
     <router-view />
   </div>
 </template>
 <script>
-import qs from 'qs'
-import moment from 'moment'
-let base64 = require('js-base64').Base64
-
 export default {
   name: 'app',
   data: function () {
     return {
       activeIndex: '1',
-      loginAuthorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6WyJzdGF0cyIsImRhdGEiLCJtYWlubGVhZGVyIiwib2ZmbGVhZGVyIiwicmVjdGlmeSIsImFkbWluIiwicGxhbiIsInF1YWxpdHkiLCJhdWRpdG9yIiwic3lzIl0sImlzcyI6IklDU1MiLCJleHAiOjMyODA4OTI2ODMsInB3YyI6IjAiLCJpYXQiOjE1NzU4NTk5NzksIm4iOiLns7vnu5_nrqHnkIblkZgiLCJvbiI6IuS4nOmjjuaxvei9pumbhuWbouaciemZkOWFrOWPuCIsInB3Y21zZyI6IjAifQ.lO4UEDpVgO1Gua0oMj7QuC9mOUfdNb-usSu4cdzM0VuMzpR9x8Qu9E98l2KfZqi7tGSPI0SfV19h81gu98upDA'
+      src: '',
+      args: ''
     }
   },
   created () {
-    // sessionStorage.setItem('a', this.loginAuthorization)
-    // this.login()
+    this.src = this.$refs['myframe'].src
+    this.args = this.getQueryArgs(this.src)
+    sessionStorage.setItem('a', this.args.authorization)
+    // if (this.args.name === 'dealresult') this.activeIndex = '2'
+    this.$router.push({ name: this.args.name })
   },
   methods: {
-    login () {
-      this.$http
-        .post('/root/login', {
-          loginname: 'admin163',
-          password: base64.encode('1234567')
-        }, {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          transformRequest: [
-            function (data) {
-              return qs.stringify(data, {
-                serializeDate: timestamp => {
-                  let utcTime = moment(timestamp).format('YYYY/MM/DD HH:mm:ss')
-                  return utcTime
-                }
-              })
-            }
-          ]
-        })
-        .then(res => {
-          if (res.data.code === 0 || res.data.code === 2) {
-            // 登录成功跳转
-            this.$router.push('/bookfile')
-          }
-        })
-    }
+    getQueryArgs (url) {
+      var qs = (url.length > 0 ? url.substring(url.indexOf('?')).substr(1) : '')
+      var args = {}
+      var items = qs.length ? qs.split('&') : []
+      var item = null
+      var name = null
+      var value = null
+      var i = 0
+      var len = items.length
 
+      for (i = 0; i < len; i++) {
+        item = items[i].split('=')
+        name = decodeURIComponent(item[0])
+        value = decodeURIComponent(item[1])
+        if (name.length) {
+          args[name] = value
+        }
+      }
+      return args
+    }
   }
 }
 </script>

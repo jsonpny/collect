@@ -11,8 +11,8 @@ axios.defaults.baseURL = '/finance'
 axios.interceptors.request.use(
   config => {
     config.headers['authorization'] = sessionStorage.getItem('a')
-    if (config.isLoading !== false) {
-      // 如果配置了isLoading: false，则不显示loading
+    if (config.headers['isLoading'] !== false) {
+      // 如果配置了headers.isLoading=false，则不显示loading
       showFullScreenLoading()
     }
 

@@ -64,14 +64,14 @@ export default {
   },
   created () {
     this.getdealresultList()
-    this.timeNum = setInterval(this.getdealresultList, 1000)
   },
   methods: {
     // 加载列表
     getdealresultList () {
-      this.$http.post('/api/dealResult/list', this.searchParam).then(res => {
+      this.$http.post('/api/dealResult/list', this.searchParam, { headers: { isLoading: false } }).then(res => {
         this.page = res.data.data
-        clearInterval(this.timeNum)
+        if (this.timeNum) clearInterval(this.timeNum)
+        this.timeNum = setInterval(this.getdealresultList, 2000)
       })
     },
     // 查看进度明细

@@ -4,12 +4,12 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    // 根目录
-    name: 'home',
-    path: '/',
-    redirect: '/bookfile'
-  },
+  // {
+  //   // 根目录
+  //   name: 'home',
+  //   path: '/',
+  //   redirect: '/bookfile'
+  // },
   {
     // 采集文件管理
     name: 'bookfile',
@@ -23,7 +23,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "bookFile" */'@/views/bookfile/detail')
   },
   { // 采集处理管理
-    name: 'dealresulth',
+    name: 'dealresult',
     path: '/dealresult',
     component: () => import(/* webpackChunkName: "dealResult" */'@/views/dealresult/list')
   },
